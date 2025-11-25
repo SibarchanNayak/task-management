@@ -10,6 +10,7 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { createTask } from "../../api";
+import { showAlert } from "../../components/showAlert";
 
 const schema = Yup.object({
   title: Yup.string().required("Title is required"),
@@ -35,12 +36,30 @@ const CreateTask = () => {
             description: "",
             status: "todo",
             priority: "medium",
-            dueDate: "",
+            dueDate: null,
           }}
           validationSchema={schema}
           onSubmit={async (values) => {
-            await createTask(values);
-            navigate("/tasks");
+            try {
+              const res = await createTask(values);
+              showAlert({
+                text: res.data.message,
+                icon: "success",
+              });
+              navigate("/tasks");
+            } catch (error) {
+              if (error.response) {
+                showAlert({
+                  text: error.response.data.message,
+                  icon: "error",
+                });
+              } else {
+                showAlert({
+                  text: "Something went wrong",
+                  icon: "error",
+                });
+              }
+            }
           }}
         >
           {({ values, errors, touched, handleChange }) => (

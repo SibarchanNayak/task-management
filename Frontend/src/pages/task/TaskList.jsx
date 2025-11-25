@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 
 import { getTasks, deleteTask } from "../../api";
 import ConfirmDialog from "../../components/ConfirmDialog";
+import { showAlert } from "../../components/showAlert";
 
 const TaskList = () => {
   const navigate = useNavigate();
@@ -65,9 +66,27 @@ const TaskList = () => {
   }, [loadTasks]);
 
   const handleDelete = async () => {
-    await deleteTask(deleteId);
-    setOpenConfirm(false);
-    loadTasks();
+    try {
+      const res = await deleteTask(deleteId);
+      showAlert({
+        text: res.data.message,
+        icon: "success",
+      });
+      setOpenConfirm(false);
+      loadTasks();
+    } catch (error) {
+      if (error.response) {
+        showAlert({
+          text: error.response.data.message,
+          icon: "error",
+        });
+      } else {
+        showAlert({
+          text: "Something went wrong",
+          icon: "error",
+        });
+      }
+    }
   };
 
   const handleSort = (column) => {
@@ -116,8 +135,8 @@ const TaskList = () => {
         <Table stickyHeader size={isSmallScreen ? "small" : "medium"}>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ whiteSpace: "nowrap", fontSize: "0.7rem" }}>
-                SL NO
+              <TableCell sx={{ whiteSpace: "nowrap", width: "30px" }}>
+                Sl. No.
               </TableCell>
               <TableCell>
                 <TableSortLabel

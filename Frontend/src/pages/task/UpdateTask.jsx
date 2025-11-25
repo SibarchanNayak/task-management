@@ -13,6 +13,7 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useNavigate, useParams } from "react-router-dom";
 import { getTaskById, updateTask } from "../../api";
+import { showAlert } from "../../components/showAlert";
 
 const validationSchema = Yup.object({
   title: Yup.string().max(200, "Max 200 characters"),
@@ -62,10 +63,24 @@ const UpdateTask = () => {
 
   const onSubmit = async (values) => {
     try {
-      await updateTask(id, values);
+      const res = await updateTask(id, values);
+      showAlert({
+        text: res.data.message,
+        icon: "success",
+      });
       navigate("/tasks");
     } catch (error) {
-      console.error(error);
+      if (error.response) {
+        showAlert({
+          text: error.response.data.message,
+          icon: "error",
+        });
+      } else {
+        showAlert({
+          text: "Something went wrong",
+          icon: "error",
+        });
+      }
     }
   };
 

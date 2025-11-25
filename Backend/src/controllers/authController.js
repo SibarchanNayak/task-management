@@ -109,6 +109,7 @@ export const loginUser = async (req, res, next) => {
     res.json({
       user,
       auth: true,
+      message: "Login Successfully",
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -130,7 +131,9 @@ export const logout = async (req, res, next) => {
   res.clearCookie("refreshToken");
 
   // 2.response
-  res.status(200).json({ admin: null, auth: false });
+  res
+    .status(200)
+    .json({ admin: null, auth: false, message: "Logout Successfully" });
 };
 //refresh
 export const refresh = async (req, res, next) => {

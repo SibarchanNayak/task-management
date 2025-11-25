@@ -13,7 +13,7 @@ export const register = async (data) => {
     const response = await api.post("/api/auth/register", data);
     return response;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 export const login = async (data) => {
@@ -21,7 +21,7 @@ export const login = async (data) => {
     const response = await api.post("/api/auth/login", data);
     return response;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -30,7 +30,7 @@ export const getTasks = async (params = {}) => {
     const response = await api.get("/api/task", { params });
     return response;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 export const createTask = async (data) => {
@@ -38,7 +38,7 @@ export const createTask = async (data) => {
     const response = await api.post("/api/task", data);
     return response;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 // Update
@@ -47,7 +47,7 @@ export const updateTask = async (id, data) => {
     const response = api.put(`/api/task/${id}`, data);
     return response;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -56,7 +56,7 @@ export const getTaskById = async (id) => {
     const response = await api.get(`/api/task/${id}`);
     return response;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -66,7 +66,7 @@ export const deleteTask = async (id) => {
     const response = await api.delete(`/api/task/${id}`);
     return response;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -75,28 +75,27 @@ export const logout = async () => {
     const response = await api.get("/api/auth/logout");
     return response;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
 // auto token refresh
 api.interceptors.response.use(
-  (config) => config,
+  (response) => response,
   async (error) => {
     const originalReq = error.config;
 
-    if (error.response.status === 401 && !originalReq._isRetry) {
+    if (error.response?.status === 401 && !originalReq._isRetry) {
       originalReq._isRetry = true;
       try {
         await api.get("/api/auth/refresh");
-
         return api.request(originalReq);
-      } catch (error) {
+      } catch (err) {
         await api.get("/api/auth/logout");
-        return error;
+        return Promise.reject(err);
       }
-    } else {
-      return error.response;
     }
+
+    return Promise.reject(error);
   }
 );

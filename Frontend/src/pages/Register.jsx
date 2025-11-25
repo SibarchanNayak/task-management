@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -10,7 +9,7 @@ import {
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { showAlert } from "../components/showAlert";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { register } from "../api";
 
 const registerSchema = Yup.object().shape({
@@ -27,8 +26,6 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleRegister = async (values, { setSubmitting, resetForm }) => {
-    // setServerError("");
-
     try {
       const res = await register(values);
 
@@ -123,6 +120,16 @@ const Register = () => {
                 helperText={touched.password && errors.password}
               />
 
+              <Typography
+                sx={{
+                  fontSize: 14,
+                  textAlign: "right",
+                  mb: 1,
+                }}
+              >
+                Have account?
+                <Link to={"/login"}>Login</Link>
+              </Typography>
               <Button
                 type="submit"
                 variant="contained"

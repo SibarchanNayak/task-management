@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { resetUser } from "../store/userSlice";
 import { logout } from "../api";
+import { showAlert } from "./showAlert";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -11,9 +12,31 @@ const Header = () => {
   const userName = useSelector((state) => state.user.name);
 
   const handleLogout = async () => {
-    await logout();
-    dispatch(resetUser());
-    navigate("/login");
+    try {
+      const res = await logout();
+      console.log("res", res.data);
+
+      showAlert({
+        text: res.data.message,
+        icon: "success",
+      });
+      dispatch(resetUser());
+      navigate("/login");
+    } catch (error) {
+      // console.log("error", error);
+
+      if (error.response) {
+        showAlert({
+          text: error.response.data.message,
+          icon: "error",
+        });
+      } else {
+        showAlert({
+          text: "Something went wrong",
+          icon: "error",
+        });
+      }
+    }
   };
 
   return (

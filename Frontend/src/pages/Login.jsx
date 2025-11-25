@@ -1,5 +1,5 @@
 import { login } from "../api";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { Formik, Form } from "formik";
 import {
@@ -32,7 +32,11 @@ const Login = () => {
 
     try {
       const res = await login(values);
-      console.log(res.data);
+
+      showAlert({
+        text: res.data.message,
+        icon: "success",
+      });
 
       const data = {
         _id: res.data.user._id,
@@ -43,10 +47,6 @@ const Login = () => {
       };
       dispatch(setUser(data));
 
-      showAlert({
-        text: res.data.message,
-        icon: "success",
-      });
       resetForm();
       navigate("/");
     } catch (error) {
@@ -120,6 +120,17 @@ const Login = () => {
                 error={touched.password && Boolean(errors.password)}
                 helperText={touched.password && errors.password}
               />
+
+              <Typography
+                sx={{
+                  fontSize: 14,
+                  textAlign: "right",
+                  mb: 1,
+                }}
+              >
+                Do not have account?
+                <Link to={"/register"}>Register</Link>
+              </Typography>
 
               <Button
                 type="submit"
