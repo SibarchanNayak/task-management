@@ -106,13 +106,13 @@ export const loginUser = async (req, res, next) => {
       secure: true,
     });
 
-    res.json({
+    return res.json({
       user,
       auth: true,
       message: "Login Successfully",
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -133,8 +133,9 @@ export const logout = async (req, res, next) => {
   // 2.response
   res
     .status(200)
-    .json({ admin: null, auth: false, message: "Logout Successfully" });
+    .json({ user: null, auth: false, message: "Logout Successfully" });
 };
+
 //refresh
 export const refresh = async (req, res, next) => {
   const originalRefreshToken = req.cookies.refreshToken;

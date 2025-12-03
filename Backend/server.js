@@ -11,7 +11,6 @@ const app = express();
 
 app.use(cookieParser());
 
-// Middlewares
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -30,13 +29,11 @@ app.get("/", (req, res) => {
   });
 });
 
-// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/task", taskRoutes);
 
 connectDB();
 
-// Global Error Handler
 app.use(errorHandler);
 
 app.listen(PORT || 5000, () => {
